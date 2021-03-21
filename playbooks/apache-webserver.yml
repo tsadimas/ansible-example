@@ -1,0 +1,55 @@
+---
+- hosts: webserver
+  become: true
+  tasks:
+
+    - name: install apache webserver
+      apt:
+        name: apache2
+        state: present
+        update_cache: true
+    
+    - name: ensure apache2 started
+      service: 
+        name: apache2
+        state: started
+        enabled: yes
+    
+    - name: create /var/www/demo directory
+      file:
+        path: /var/www/demo
+        state: directory
+
+    - name: copy index.html
+      copy:
+        src: ../files/webserver/index.html
+        dest: /var/www/demo
+        mode: 0755
+      
+    - name: disable default apache conf
+      file:
+        path: /etc/apache2/sites-enabled/000-default.conf
+        state: absent
+      notify: restart apache
+
+    - name: copy demo apache conf
+      copy:
+        src: ../files/webserver/demo.conf
+        dest: /etc/apache2/sites-available
+        mode: 0755
+      notify: restart apache
+
+    - name: enable demo apache conf
+      file:
+        src: /etc/apache2/sites-available/demo.conf
+        dest: /etc/apache2/sites-enabled/demo.conf
+        state: link
+      notify: restart apache
+
+  handlers:
+    - name: restart apache
+      service:
+        name: apache2
+        state: restarted
+
+    

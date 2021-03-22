@@ -1,54 +1,34 @@
 ---
-- hosts: all
+- hosts: database
   become: true
-   
   vars:   
-    mysql_root_password: password 
+    mysql_root_password: pass123 
   
   tasks:
-    - name: install mysql-server
-      apt: 
-        name: mysql-server 
-        state: present 
-        update_cache: yes
-  
- 
-    - name: Determine required MySQL Python libraries.
-      set_fact:
-        deb_mysql_python_package: "{% if 'python3' in ansible_python_interpreter|default('') %}python3-mysqldb{% else %}python-mysqldb{% endif %}"
 
-    - name: Ensure MySQL Python libraries are installed.
-      apt: "name={{ deb_mysql_python_package }} state=present"
+  - name: Specify MySQL root password before installing
+    debconf: 
+      name: 'mysql-server' 
+      question: 'mysql-server/root_password' 
+      value: '{{mysql_root_password | quote}}' 
+      vtype: 'password'
 
+  - name: Confirm MySQL root password before installing
+    debconf: 
+      name: 'mysql-server' 
+      question: 'mysql-server/root_password_again'
+      value: '{{mysql_root_password | quote}}'
+      vtype: 'password'
     
-    - name: Change the authentication plugin of MySQL root user to mysql_native_password
-      shell: mysql -u root -e 'UPDATE mysql.user SET plugin="mysql_native_password"
-              WHERE user="root" AND host="localhost"'
-      notify: restart mysql
-    
-    - name: Flush Privileges
-      shell: mysql -u root -e 'FLUSH PRIVILEGES'
-      notify: restart mysql
+  - name: install mysql-server
+    apt: 
+      name: mysql-server 
+      state: present 
+      update_cache: yes
 
-    
-    - name: Set MySQL root password
-      mysql_user:
-        login_host: 'localhost'
-        login_user: 'root'
-        login_password: ''
-        name: 'root'
-        password: '{{ mysql_root_password }}'
-        state: present
-
-    - name: ensure mysql started
-      service:
-        name: mysql
-        state: started
-        enabled: yes
-
-  handlers:
-    - name: restart mysql
-      service:
-        name: mysql
-        state: restarted
+  - name: ensure mysql started
+    service:
+      name: mysql
+      state: started
+      enabled: yes
 

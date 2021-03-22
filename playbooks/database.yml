@@ -1,5 +1,5 @@
 ---
-- hosts: database
+- hosts: all
   become: true
    
   vars:   
@@ -24,9 +24,12 @@
     - name: Change the authentication plugin of MySQL root user to mysql_native_password
       shell: mysql -u root -e 'UPDATE mysql.user SET plugin="mysql_native_password"
               WHERE user="root" AND host="localhost"'
+      notify: restart mysql
     
     - name: Flush Privileges
       shell: mysql -u root -e 'FLUSH PRIVILEGES'
+      notify: restart mysql
+
     
     - name: Set MySQL root password
       mysql_user:
@@ -42,3 +45,10 @@
         name: mysql
         state: started
         enabled: yes
+
+  handlers:
+    - name: restart mysql
+      service:
+        name: mysql
+        state: restarted
+

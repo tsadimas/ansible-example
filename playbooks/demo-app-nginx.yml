@@ -1,0 +1,82 @@
+---
+- hosts: webserver
+  become: true
+  tasks:
+
+  - name: "APT - install misc packages"
+    apt:
+      name: [python3, python3-pip, python3-virtualenv, git, virtualenv, nginx, build-essential, libssl-dev, redis-server, libtool, autoconf, curl, supervisor]
+      update_cache: yes
+    become: yes
+    become_user: root
+    when: hostvars[inventory_hostname].ansible_distribution == 'Ubuntu'
+  
+  
+  - name: create /var/www/demo and app directories
+    file:
+      path: "{{item}}"
+      state: directory
+    with_items:
+      - "/var/www/demo"
+      - "/var/www/demo/app"
+
+  
+  - name: copy demo app source
+    copy: 
+      src: ../demo/app/
+      dest: /var/www/demo/app
+
+  - name: copy requirements.txt
+    copy:
+      src: ../demo/requirements.txt
+      dest: /var/www/demo/
+
+  - name: setup virtual environment
+    pip:
+      requirements: /var/www/demo/requirements.txt
+      virtualenv: /var/www/demo/.venv
+      virtualenv_python: python3
+
+  - name: copy app demo service file
+    copy: 
+      src: ../demo/demo.service
+      dest: /etc/systemd/system/demo.service
+
+  - name: ensure demo service started
+    service: 
+      name: demo
+      state: started
+      enabled: yes
+
+  - name: copy nginx conf file
+    template:
+      src: ../files/nginx/demo.nginx
+      dest: "/etc/nginx/sites-available/demo"
+  
+  - name: enable drill site in nginx
+    file:
+      src: "/etc/nginx/sites-available/demo"
+      dest: "/etc/nginx/sites-enabled/demo"
+      state: link
+    notify: restart nginx
+
+  - name: de-activate default nginx site
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+    notify: restart nginx
+
+
+  handlers:
+  - name: restart demo
+    service:
+      name: demo
+      state: restarted
+
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
+
+
+

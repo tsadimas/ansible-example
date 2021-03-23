@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve demo project
+After=network.target
+
+[Service]
+User=vagrant
+Group=www-data
+WorkingDirectory=/var/www/demo
+Environment="PATH=/var/www/demo/.venv/bin/"
+ExecStart=/var/www/demo/.venv/bin/gunicorn app.demo:app --workers 3 --bind 0.0.0.0:5000
+
+[Install]
+WantedBy=multi-user.target

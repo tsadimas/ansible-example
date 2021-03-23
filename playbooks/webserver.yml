@@ -4,7 +4,7 @@
   tasks:
     - name: install apache2
       apt: 
-        name: ['apache2','libapache2-mod-wsgi','python-pip','python-virtualenv'] 
+        name: ['apache2','libapache2-mod-wsgi','python3','python3-pip', 'python3-virtualenv'] 
         state: present 
         update_cache: yes
 
@@ -34,10 +34,17 @@
         mode: 0755
       notify: restart apache2
 
+    - name: copy requirements.txt
+      copy:
+        src: ../demo/requirements.txt
+        dest: /var/www/demo/
+       
+
     - name: setup virtual environment
       pip:
         requirements: /var/www/demo/requirements.txt
         virtualenv: /var/www/demo/.venv
+        virtualenv_python: python3
       notify: restart apache2
 
     - name: de-activate default apache site

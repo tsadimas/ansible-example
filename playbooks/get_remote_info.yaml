@@ -11,6 +11,10 @@
     command: ls /home
     register: home_dirs
 
+  - name: print home dirs object
+    debug:
+      msg: "{{home_dirs}}"
+
   - name: print home dirs
     debug:
       msg: "{{home_dirs.stdout}}"

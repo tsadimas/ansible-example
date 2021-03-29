@@ -1,6 +1,5 @@
 ---
 - hosts: webserver
-  become: true
 
   vars:
     user_dir: "/home/vagrant"
@@ -26,5 +25,31 @@
       clone: yes
       #force: yes
       dest: "{{app_dir}}"
-    tags: cloneserver
     changed_when: true
+
+
+  - name: install and activate virtual environment
+    block:
+    - name: setup virtual environment
+      pip:
+        requirements: "{{app_dir}}/requirements.txt"
+        virtualenv: "{{app_dir}}/myvenv"
+        virtualenv_python: python3
+    rescue:
+    - name: "APT - install misc packages"
+      apt:
+        name: [python3, python3-pip, python3-virtualenv, virtualenv]
+        update_cache: yes
+      become: yes
+      become_user: root
+      when: hostvars[inventory_hostname].ansible_distribution == 'Ubuntu'
+    always:
+    - name: setup virtual environment
+      pip:
+        requirements: "{{app_dir}}/requirements.txt"
+        virtualenv: "{{app_dir}}/myvenv"
+        virtualenv_python: python3
+
+
+
+  

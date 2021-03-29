@@ -72,8 +72,7 @@
       service:
         name: gunicorn
         state: restarted
-      become: yes
-
+      
     
 
 

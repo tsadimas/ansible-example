@@ -53,7 +53,7 @@
       src: ../files/nginx/demo.nginx
       dest: "/etc/nginx/sites-available/demo"
   
-  - name: enable drill site in nginx
+  - name: enable demo site in nginx
     file:
       src: "/etc/nginx/sites-available/demo"
       dest: "/etc/nginx/sites-enabled/demo"

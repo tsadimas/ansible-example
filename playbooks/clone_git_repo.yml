@@ -1,0 +1,30 @@
+---
+- hosts: webserver
+  become: true
+
+  vars:
+    user_dir: "/home/vagrant"
+    app_dir: "{{user_dir}}/django-project"
+    git_repo_url: "https://github.com/tsadimas/django3-sampe-project.git"
+    git_repo_branch: "main"
+
+  tasks:
+
+
+  - name: ensure github.com is a known host
+    lineinfile:
+      dest: "{{user_dir}}/.ssh/known_hosts"
+      create: yes
+      state: present
+      line: "{{lookup('pipe', 'ssh-keyscan -t rsa github.com')}}"
+      regexp: "^github\\.com"
+
+  - name: clone django project
+    git:
+      repo: "{{git_repo_url}}"
+      version: "{{git_repo_branch}}"
+      clone: yes
+      #force: yes
+      dest: "{{app_dir}}"
+    tags: cloneserver
+    changed_when: true

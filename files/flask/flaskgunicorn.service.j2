@@ -1,0 +1,12 @@
+[Unit]
+Description=flask gunicorn daemon
+After=network.target
+
+[Service]
+User=vagrant
+Group=www-data
+WorkingDirectory={{service.workingdir}}
+ExecStart={{service.execstart}}
+
+[Install]
+WantedBy=multi-user.target

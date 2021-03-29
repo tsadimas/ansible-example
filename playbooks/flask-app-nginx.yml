@@ -1,82 +1,108 @@
 ---
 - hosts: webserver
-  become: true
+
+  vars:
+    user_dir: "/home/vagrant"
+    app_dir: "{{user_dir}}/flask-project"
+    git_repo_url: "https://github.com/tsadimas/flask-example-project.git"
+    git_repo_branch: "main"
+  
   tasks:
 
-  - name: "APT - install misc packages"
-    apt:
-      name: [python3, python3-pip, python3-virtualenv, git, virtualenv, nginx, build-essential, libssl-dev, redis-server, libtool, autoconf, curl, supervisor]
-      update_cache: yes
-    become: yes
-    become_user: root
-    when: hostvars[inventory_hostname].ansible_distribution == 'Ubuntu'
-  
-  
-  - name: create /var/www/demo and app directories
-    file:
-      path: "{{item}}"
-      state: directory
-    with_items:
-      - "/var/www/demo"
-      - "/var/www/demo/app"
+  - name: ensure github.com is a known host
+    lineinfile:
+      dest: "{{user_dir}}/.ssh/known_hosts"
+      create: yes
+      state: present
+      line: "{{lookup('pipe', 'ssh-keyscan -t rsa github.com')}}"
+      regexp: "^github\\.com"
 
-  
-  - name: copy demo app source
-    copy: 
-      src: ../demo/app/
-      dest: /var/www/demo/app
+  - name: clone flask project
+    git:
+      repo: "{{git_repo_url}}"
+      version: "{{git_repo_branch}}"
+      clone: yes
+      #force: yes
+      dest: "{{app_dir}}"
+    changed_when: true
 
-  - name: copy requirements.txt
-    copy:
-      src: ../demo/requirements.txt
-      dest: /var/www/demo/
 
-  - name: setup virtual environment
-    pip:
-      requirements: /var/www/demo/requirements.txt
-      virtualenv: /var/www/demo/.venv
-      virtualenv_python: python3
+  - name: install and activate virtual environment
+    block:
+    - name: setup virtual environment
+      pip:
+        requirements: "{{app_dir}}/requirements.txt"
+        virtualenv: "{{app_dir}}/fvenv"
+        virtualenv_python: python3
+    rescue:
+    - name: "APT - install misc packages"
+      apt:
+        name: [python3, python3-pip, python3-virtualenv, virtualenv]
+        update_cache: yes
+      become: yes
+      become_user: root
+      when: hostvars[inventory_hostname].ansible_distribution == 'Ubuntu'
+    always:
 
-  - name: copy app demo service file
-    copy: 
-      src: ../demo/demo.service
-      dest: /etc/systemd/system/demo.service
+    - name: setup virtual environment
+      pip:
+        requirements: "{{app_dir}}/requirements.txt"
+        virtualenv: "{{app_dir}}/fvenv"
+        virtualenv_python: python3
+    
+    - name: copy flask service file
+      template:
+        src: ../files/flask/flaskgunicorn.service.j2
+        dest: "/etc/systemd/system/flaskgunicorn.service"
+      become: yes
+      become_user: root
+      notify: restart flaskgunicorn
 
-  - name: ensure demo service started
-    service: 
-      name: demo
-      state: started
-      enabled: yes
-
-  - name: copy nginx conf file
-    template:
-      src: ../files/nginx/demo.nginx
-      dest: "/etc/nginx/sites-available/demo"
-  
-  - name: enable demo site in nginx
-    file:
-      src: "/etc/nginx/sites-available/demo"
-      dest: "/etc/nginx/sites-enabled/demo"
-      state: link
-    notify: restart nginx
-
-  - name: de-activate default nginx site
-    file:
-      path: /etc/nginx/sites-enabled/default
-      state: absent
-    notify: restart nginx
-
+    - name: ensure flaskgunicorn service started
+      service: 
+        name: flaskgunicorn
+        state: started
+        enabled: yes
+      become: yes
 
   handlers:
-  - name: restart demo
-    service:
-      name: demo
-      state: restarted
+    - name: restart flaskgunicorn
+      service:
+        name: flaskgunicorn
+        state: restarted
+      become: yes
 
-  - name: restart nginx
-    service:
-      name: nginx
-      state: restarted
+
+
+  # - name: copy nginx conf file
+  #   template:
+  #     src: ../files/nginx/demo.nginx
+  #     dest: "/etc/nginx/sites-available/demo"
+  
+  # - name: enable demo site in nginx
+  #   file:
+  #     src: "/etc/nginx/sites-available/demo"
+  #     dest: "/etc/nginx/sites-enabled/demo"
+  #     state: link
+  #   notify: restart nginx
+
+  # - name: de-activate default nginx site
+  #   file:
+  #     path: /etc/nginx/sites-enabled/default
+  #     state: absent
+  #   notify: restart nginx
+
+
+  # handlers:
+  # - name: restart demo
+  #   service:
+  #     name: demo
+  #     state: restarted
+
+  # - name: restart nginx
+  #   service:
+  #     name: nginx
+  #     state: restarted
 
 
 

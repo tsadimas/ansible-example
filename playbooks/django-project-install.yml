@@ -64,12 +64,16 @@
         name: gunicorn
         state: started
         enabled: yes
+      become: yes
+
 
   handlers:
     - name: restart gunicorn
       service:
         name: gunicorn
         state: restarted
+      become: yes
+
     
 
 

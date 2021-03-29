@@ -44,11 +44,37 @@
       become_user: root
       when: hostvars[inventory_hostname].ansible_distribution == 'Ubuntu'
     always:
+
     - name: setup virtual environment
       pip:
         requirements: "{{app_dir}}/requirements.txt"
         virtualenv: "{{app_dir}}/myvenv"
         virtualenv_python: python3
+    
+    - name: copy django service file
+      template:
+        src: ../files/django/gunicorn.service.j2
+        dest: "/etc/systemd/system/gunicorn.service"
+      become: yes
+      become_user: root
+      notify: gunicorn service restart
+
+    - name: ensure gunicorn service started
+      service: 
+        name: gunicorn
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: restart gunicorn
+      service:
+        name: gunicorn
+        state: restarted
+    
+
+
+    
+
 
 
 

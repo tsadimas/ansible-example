@@ -9,3 +9,7 @@
 .vagrant
 *.pub
 *.log
+
+# Certificates
+*.crt
+*.key

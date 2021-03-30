@@ -43,6 +43,14 @@ chmod 600 ~/.ansible/vault_pass.txt
 ```bash
 ansible-playbook playbooks/use-api-key.yaml --vault-password-file  ~/.ansible/vault_pass.txt
 ```
+
+
+## Create self-signed certificates
+```bash
+cd files/certs
+openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 365 --nodes -subj '/C=GR/O=myorganization/OU=it/CN=myorg.com'
+```
+notice that crt and key files are added to .gitignore
 ## Links
 * [apt module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html)
 * [file module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html)

@@ -77,11 +77,33 @@
       template:
         src: ../files/nginx/demo.nginx.j2
         dest: "/etc/nginx/sites-available/flask"
+
+    - name: copy nginx https conf file
+      template:
+        src: ../files/nginx/demo.https.nginx.j2
+        dest: "/etc/nginx/sites-available/flaskssl"
+
+
+    - name: copy certificates
+      copy:
+        src: "{{item}}"
+        dest: /etc/ssl/private/
+      with_items:
+        - ../files/certs/server.crt
+        - ../files/certs/server.key
+      
   
     - name: enable flask site in nginx
       file:
         src: "/etc/nginx/sites-available/flask"
         dest: "/etc/nginx/sites-enabled/flask"
+        state: link
+      notify: restart nginx
+
+    - name: enable flaskssl site in nginx
+      file:
+        src: "/etc/nginx/sites-available/flaskssl"
+        dest: "/etc/nginx/sites-enabled/flaskssl"
         state: link
       notify: restart nginx
 

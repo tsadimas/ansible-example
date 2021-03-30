@@ -51,7 +51,7 @@
     rescue:
     - name: "APT - install misc packages"
       apt:
-        name: [python3, python3-pip, python3-virtualenv, virtualenv, libmysqlclient-dev, mycli]
+        name: [python3, python3-pip, python3-virtualenv, virtualenv, libmysqlclient-dev, mycli, pgcli, libpq-dev]
         update_cache: yes
       become: yes
       become_user: root

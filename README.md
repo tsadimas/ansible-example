@@ -51,6 +51,13 @@ cd files/certs
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 365 --nodes -subj '/C=GR/O=myorganization/OU=it/CN=myorg.com'
 ```
 notice that crt and key files are added to .gitignore
+
+
+* postgres
+install postgresql role
+```bash
+ansible-galaxy install geerlingguy.postgresql
+```
 ## Links
 * [apt module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html)
 * [file module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html)

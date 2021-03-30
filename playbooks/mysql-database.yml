@@ -1,8 +1,7 @@
 ---
 - hosts: database
   become: true
-  vars:
-    mysql_root_password: pass123456789
+  
   
   tasks:
 
@@ -16,8 +15,7 @@
       question: 'mysql-server/root_password' 
       value: '{{mysql_root_password | quote}}' 
       vtype: 'password'
-    # vars: 
-    #   mysql_root_password: pass0
+    
 
   - name: Confirm MySQL root password before installing
     debconf: 
@@ -25,8 +23,7 @@
       question: 'mysql-server/root_password_again'
       value: '{{mysql_root_password | quote}}'
       vtype: 'password'
-    # vars: 
-    #   mysql_root_password: pass0
+    
     
   - name: install mysql-server
     apt: 

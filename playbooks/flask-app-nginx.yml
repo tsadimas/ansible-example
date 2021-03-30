@@ -26,6 +26,19 @@
       dest: "{{app_dir}}"
     changed_when: true
 
+  - name: copy env file
+    shell : "cp {{app_dir}}/.env.example {{app_dir}}/.env"
+
+  - name: populate  ~/.env
+    lineinfile:
+      dest: "{{app_dir}}/.env"
+      state: present
+      regexp: "^{{item.key}}="
+      line: "{{item.key}}='{{item.value}}'"
+    with_items:
+      - "{{app.env | dict2items}}"
+
+
 
   - name: install and activate virtual environment
     block:
@@ -49,6 +62,7 @@
         requirements: "{{app_dir}}/requirements.txt"
         virtualenv: "{{app_dir}}/fvenv"
         virtualenv_python: python3
+        state: forcereinstall
     
     - name: copy flask service file
       template:

@@ -1,3 +1,4 @@
+app_port: 5000
 service:
   workingdir: /home/vagrant/django-project/myproject
   execstart: /home/vagrant/django-project/myvenv/bin/gunicorn --access-logfile - --workers 3 --bind 0.0.0.0:8000 myproject.wsgi:application

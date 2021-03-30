@@ -65,44 +65,49 @@
         enabled: yes
       become: yes
 
-  handlers:
-    - name: restart flaskgunicorn
-      service:
-        name: flaskgunicorn
-        state: restarted
-      become: yes
+  - name: install and configure nginx
+    block:
 
+    - name: "APT - install nginx"
+      apt:
+        name: nginx
+        update_cache: yes
 
-
-  # - name: copy nginx conf file
-  #   template:
-  #     src: ../files/nginx/demo.nginx
-  #     dest: "/etc/nginx/sites-available/demo"
+    - name: copy nginx conf file
+      template:
+        src: ../files/nginx/demo.nginx.j2
+        dest: "/etc/nginx/sites-available/flask"
   
-  # - name: enable demo site in nginx
-  #   file:
-  #     src: "/etc/nginx/sites-available/demo"
-  #     dest: "/etc/nginx/sites-enabled/demo"
-  #     state: link
-  #   notify: restart nginx
+    - name: enable flask site in nginx
+      file:
+        src: "/etc/nginx/sites-available/flask"
+        dest: "/etc/nginx/sites-enabled/flask"
+        state: link
+      notify: restart nginx
 
-  # - name: de-activate default nginx site
-  #   file:
-  #     path: /etc/nginx/sites-enabled/default
-  #     state: absent
-  #   notify: restart nginx
+    - name: de-activate default nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: restart nginx
+    
+    become: yes
+    become_user: root
 
 
-  # handlers:
-  # - name: restart demo
-  #   service:
-  #     name: demo
-  #     state: restarted
+  handlers:
 
-  # - name: restart nginx
-  #   service:
-  #     name: nginx
-  #     state: restarted
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
+    become: yes
+  
+  - name: restart flaskgunicorn
+    service:
+      name: flaskgunicorn
+      state: restarted
+    become: yes
 
 
 

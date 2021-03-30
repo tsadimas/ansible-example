@@ -5,6 +5,6 @@ service:
 
 app:
   env:
-    SQLALCHEMY_DATABASE_URI: mysql+pymsql://demo:demo@db01/demo
+    SQLALCHEMY_DATABASE_URI: mysql://demo:demo@db01/demo
     SQLALCHEMY_TRACK_MODIFICATIONS: False
     SECRET_KEY: sfvgbrh212131

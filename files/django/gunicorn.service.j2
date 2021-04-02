@@ -5,8 +5,8 @@ After=network.target
 [Service]
 User=vagrant
 Group=www-data
-WorkingDirectory={{service.workingdir}}
-ExecStart={{service.execstart}}
+WorkingDirectory={{djangoservice.workingdir}}
+ExecStart={{djangoservice.execstart}}
 
 [Install]
 WantedBy=multi-user.target

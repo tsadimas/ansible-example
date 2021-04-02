@@ -23,10 +23,33 @@
       repo: "{{git_repo_url}}"
       version: "{{git_repo_branch}}"
       clone: yes
-      #force: yes
+      force: yes
       dest: "{{app_dir}}"
     changed_when: true
 
+  - name: copy env file
+    shell : "cp {{app_dir}}/myproject/myproject/.env.example {{app_dir}}/myproject/myproject/.env"
+
+  - name: populate  ~/.env
+    lineinfile:
+      dest: "{{app_dir}}/myproject/myproject/.env"
+      state: present
+      regexp: "^{{item.key}}="
+      line: "{{item.key}}='{{item.value}}'"
+    with_items:
+      - "{{django.env | dict2items}}"
+
+  
+  - name: print ip
+    debug:
+      msg: "ALLOWED_HOSTS={{ansible_all_ipv4_addresses}}"
+
+  - name: add ip in django ALLOWED_HOSTS
+    lineinfile:
+      dest: "{{app_dir}}/myproject/myproject/settings.py"
+      regexp: "^ALLOWED_HOSTS ="
+      line: "ALLOWED_HOSTS = {{ansible_all_ipv4_addresses}}"
+      state: present
 
   - name: install and activate virtual environment
     block:
@@ -50,6 +73,19 @@
         requirements: "{{app_dir}}/requirements.txt"
         virtualenv: "{{app_dir}}/myvenv"
         virtualenv_python: python3
+
+    - name: make migrations
+      django_manage:
+        command: "{{ item }}"
+        project_path: "{{app_dir}}/myproject"
+        virtualenv: "{{app_dir}}/myvenv"
+      with_items:
+        - makemigrations
+        - migrate
+
+    
+
+    
     
     - name: copy django service file
       template:
@@ -57,7 +93,7 @@
         dest: "/etc/systemd/system/gunicorn.service"
       become: yes
       become_user: root
-      notify: gunicorn service restart
+      
 
     - name: ensure gunicorn service started
       service: 
@@ -66,8 +102,66 @@
         enabled: yes
       become: yes
 
+  - name: install and configure nginx
+    block:
+
+    - name: "APT - install nginx"
+      apt:
+        name: nginx
+        update_cache: yes
+
+    - name: copy nginx conf file
+      template:
+        src: ../files/nginx/demo.nginx.j2
+        dest: "/etc/nginx/sites-available/django"
+
+    - name: copy nginx https conf file
+      template:
+        src: ../files/nginx/demo.https.nginx.j2
+        dest: "/etc/nginx/sites-available/djangossl"
+
+
+    - name: copy certificates
+      copy:
+        src: "{{item}}"
+        dest: /etc/ssl/private/
+      with_items:
+        - ../files/certs/server.crt
+        - ../files/certs/server.key
+      
+  
+    - name: enable django site in nginx
+      file:
+        src: "/etc/nginx/sites-available/django"
+        dest: "/etc/nginx/sites-enabled/django"
+        state: link
+      notify: restart nginx
+
+    - name: enable flaskssl site in nginx
+      file:
+        src: "/etc/nginx/sites-available/djangossl"
+        dest: "/etc/nginx/sites-enabled/djangossl"
+        state: link
+      notify: restart nginx
+
+    - name: de-activate default nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: restart nginx
+    
+    become: yes
+    become_user: root
+
+
 
   handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+      become: yes
+
     - name: restart gunicorn
       service:
         name: gunicorn

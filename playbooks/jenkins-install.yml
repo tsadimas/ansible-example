@@ -1,0 +1,13 @@
+- hosts: loadbalancer
+  become: true
+  
+  vars:
+    jenkins_hostname: jenkins.example.com
+    java_packages:
+      - openjdk-11-jdk
+    jenkins_admin_username: admin
+    jenkins_admin_password: admin
+
+  roles:
+    - role: geerlingguy.java
+    - role: geerlingguy.jenkins

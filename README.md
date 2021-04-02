@@ -58,6 +58,14 @@ install postgresql role
 ```bash
 ansible-galaxy install geerlingguy.postgresql
 ```
+
+## Jenkins
+```bash
+ansible-galaxy install geerlingguy.jenkins
+ansible-galaxy install geerlingguy.java
+
+```
+
 ## Links
 * [apt module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html)
 * [file module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html)

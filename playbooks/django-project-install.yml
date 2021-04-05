@@ -8,6 +8,9 @@
 
   tasks:
 
+  - name: print user_dir
+    debug:
+      msg: "user dir is {{user_dir}}"
 
   - name: ensure github.com is a known host
     lineinfile:

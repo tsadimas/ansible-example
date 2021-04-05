@@ -2,7 +2,6 @@
 - hosts: webserver
 
   vars:
-    user_dir: "/home/vagrant"
     app_dir: "{{user_dir}}/django-project"
     git_repo_url: "https://github.com/tsadimas/django3-sampe-project.git"
     git_repo_branch: "main"

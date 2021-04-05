@@ -22,6 +22,10 @@
     set_fact:
       login_user: "{{ whoami.stdout }}"
 
+  - name: print user_dir
+    debug:
+      msg: "login user is {{login_user}}"  
+
   - name: ensure github.com is a known host
     lineinfile:
       dest: "{{user_dir}}/.ssh/known_hosts"

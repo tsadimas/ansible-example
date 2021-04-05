@@ -12,6 +12,16 @@
     debug:
       msg: "user dir is {{user_dir}}"
 
+  - name: Run whoami without become.
+    command: whoami
+    changed_when: false
+    become: false
+    register: whoami
+
+  - name: Set a fact with the user name.
+    set_fact:
+      login_user: "{{ whoami.stdout }}"
+
   - name: ensure github.com is a known host
     lineinfile:
       dest: "{{user_dir}}/.ssh/known_hosts"

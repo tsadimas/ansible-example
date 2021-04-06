@@ -61,6 +61,8 @@ ansible-galaxy install geerlingguy.postgresql
 ## Docker
 ```bash
 ansible-galaxy install geerlingguy.docker
+ansible-galaxy install geerlingguy.pip
+
 ```
 ## Jenkins
 ```bash

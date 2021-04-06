@@ -1,6 +1,11 @@
 - hosts: all
   become: yes
   become_user: root
+  vars:
+    pip_executable: pip3
+    pip_install_packages:
+      - docker
+
   tasks:
   - name: Add universe repository for bionic
     apt_repository: 
@@ -12,5 +17,13 @@
       state: present
       update_cache: true
     when: ansible_distribution_release == 'bionic'
+  
   - include_role:
       name: geerlingguy.docker
+  - include_role:
+      name: geerlingguy.pip
+  - name: 'add users to docker group'
+    user:
+      name: 'vagrant'
+      groups: 'docker'
+      append: 'yes'

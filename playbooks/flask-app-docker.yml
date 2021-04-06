@@ -1,0 +1,54 @@
+---
+- hosts: webserver
+
+  vars:
+    user_dir: "/home/vagrant"
+    app_dir: "{{user_dir}}/flask-project"
+    git_repo_url: "https://github.com/tsadimas/flask-example-project.git"
+    git_repo_branch: "main"
+  
+  tasks:
+
+  - name: ensure github.com is a known host
+    lineinfile:
+      dest: "{{user_dir}}/.ssh/known_hosts"
+      create: yes
+      state: present
+      line: "{{lookup('pipe', 'ssh-keyscan -t rsa github.com')}}"
+      regexp: "^github\\.com"
+
+  - name: clone flask project
+    git:
+      repo: "{{git_repo_url}}"
+      version: "{{git_repo_branch}}"
+      clone: yes
+      #force: yes
+      dest: "{{app_dir}}"
+    changed_when: true
+
+  - name: copy env file
+    shell : "cp {{app_dir}}/.env.example {{app_dir}}/.env"
+
+  - name: populate  ~/.env
+    lineinfile:
+      dest: "{{app_dir}}/.env"
+      state: present
+      regexp: "^{{item.key}}="
+      line: "{{item.key}}='{{item.value}}'"
+    with_items:
+      - "{{app.env | dict2items}}"
+    
+  - name:
+    command: id
+    register: user_groups
+
+  - debug:
+      msg: "Groups {{user_groups}}"
+      
+  - name: build container image
+    docker_image:
+      name: myflask:latest
+      build:
+        path: "{{app_dir}}"
+      source: build
+      state: present

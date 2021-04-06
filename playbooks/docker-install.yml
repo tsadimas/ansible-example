@@ -1,0 +1,16 @@
+- hosts: all
+  become: yes
+  become_user: root
+  tasks:
+  - name: Add universe repository for bionic
+    apt_repository: 
+      repo: deb http://archive.ubuntu.com/ubuntu bionic universe
+      state: present
+  - name: install gnupg2
+    apt:
+      name: gnupg2
+      state: present
+      update_cache: true
+    when: ansible_distribution_release == 'bionic'
+  - include_role:
+      name: geerlingguy.docker

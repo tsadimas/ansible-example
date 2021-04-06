@@ -58,7 +58,10 @@ install postgresql role
 ```bash
 ansible-galaxy install geerlingguy.postgresql
 ```
-
+## Docker
+```bash
+ansible-galaxy install geerlingguy.docker
+```
 ## Jenkins
 ```bash
 ansible-galaxy install geerlingguy.jenkins

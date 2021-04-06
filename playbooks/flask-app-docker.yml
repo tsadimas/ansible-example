@@ -34,7 +34,7 @@
       dest: "{{app_dir}}/.env"
       state: present
       regexp: "^{{item.key}}="
-      line: "{{item.key}}='{{item.value}}'"
+      line: "{{item.key}}={{item.value}}"
     with_items:
       - "{{app.env | dict2items}}"
     
@@ -52,3 +52,10 @@
         path: "{{app_dir}}"
       source: build
       state: present
+
+  - name: Start a container with a command
+    docker_container:
+      name: myflaskapp
+      image: myflask:latest
+      #command: ["sleep", "infinity"]
+      env_file: "{{app_dir}}/.env"

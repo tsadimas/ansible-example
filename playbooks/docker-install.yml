@@ -5,6 +5,7 @@
     pip_executable: pip3
     pip_install_packages:
       - docker
+      - docker-compose
 
   tasks:
   - name: Add universe repository for bionic

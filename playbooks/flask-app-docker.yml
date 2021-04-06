@@ -44,18 +44,49 @@
 
   - debug:
       msg: "Groups {{user_groups}}"
-      
-  - name: build container image
-    docker_image:
-      name: myflask:latest
-      build:
-        path: "{{app_dir}}"
-      source: build
-      state: present
 
-  - name: Start a container with a command
-    docker_container:
-      name: myflaskapp
-      image: myflask:latest
-      #command: ["sleep", "infinity"]
-      env_file: "{{app_dir}}/.env"
+  - name: check if docker-compose exists
+    stat: 
+      path: "{{app_dir}}/docker-compose.yml"
+    register: docker_compose_file
+
+  - debug:
+      msg: "docker_compose_file {{docker_compose_file}}"
+
+
+      
+  - name: build and run an image
+    block:
+    - name: build container image
+      docker_image:
+        name: myflask:latest
+        build:
+          path: "{{app_dir}}"
+        source: build
+        state: present
+
+    - name: Start a container with a command
+      docker_container:
+        name: myflaskapp
+        image: myflask:latest
+        #command: ["sleep", "infinity"]
+        env_file: "{{app_dir}}/.env"
+    when: docker_compose_file.stat.exists == False
+
+  - name: run docker docker-compose
+    block:
+      - name: Run `docker-compose up`
+        docker_compose:
+          project_src: "{{app_dir}}"
+          build: yes
+        register: output
+
+      - debug:
+          var: output
+  
+    when: docker_compose_file.stat.exists == True
+
+
+
+
+  

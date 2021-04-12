@@ -1,0 +1,22 @@
+user_dir: "/home/jenkins"
+app_port: 5000
+service:
+  workingdir: /home/vagrant/django-project/myproject
+  execstart: /home/vagrant/django-project/myvenv/bin/gunicorn --access-logfile - --workers 3 --bind 0.0.0.0:8000 myproject.wsgi:application
+
+djangoservice:
+  workingdir: /home/vagrant/django-project/myproject
+  execstart: /home/vagrant/django-project/myvenv/bin/gunicorn --access-logfile - --workers 3 --bind 0.0.0.0:8000 myproject.wsgi:application
+
+
+
+app:
+  env:
+    SQLALCHEMY_DATABASE_URI: postgresql://demouser:pass123@db01/demodb
+    SQLALCHEMY_TRACK_MODIFICATIONS: False
+    SECRET_KEY: sfvgbrh212131
+
+django:
+  env:
+    SECRET_KEY: 'sfvgbrh212131'
+    DATABASE_URL: 'postgresql://demouser:pass123@db01/demodb'

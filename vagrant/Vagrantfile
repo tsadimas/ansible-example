@@ -13,11 +13,11 @@
 Vagrant.configure(2) do |config|
   config.hostmanager.enabled = true
 
-  config.vm.box = "ubuntu/bionic64"
+  config.vm.box = "ubuntu/focal64"
 
   config.vm.define "control", primary: true do |h|
     h.vm.hostname = "control"
-    h.vm.network "private_network", ip: "192.168.135.10"
+    h.vm.network "private_network", ip: "192.168.56.10"
     h.vm.provision :shell, :inline => <<'EOF'
 if [ ! -f "/home/vagrant/.ssh/id_rsa" ]; then
   ssh-keygen -t rsa -N "" -f /home/vagrant/.ssh/id_rsa
@@ -36,25 +36,25 @@ EOF
 
   config.vm.define "lb01" do |h|
     h.vm.hostname = "lb01"
-    h.vm.network "private_network", ip: "192.168.135.101"
+    h.vm.network "private_network", ip: "192.168.56.101"
     h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
   end
 
   config.vm.define "app01" do |h|
     h.vm.hostname = "app01"
-    h.vm.network "private_network", ip: "192.168.135.111"
+    h.vm.network "private_network", ip: "192.168.56.111"
     h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
   end
 
   config.vm.define "app02" do |h|
     h.vm.hostname = "app02"
-    h.vm.network "private_network", ip: "192.168.135.112"
+    h.vm.network "private_network", ip: "192.168.56.112"
     h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
   end
 
   config.vm.define "db01" do |h|
     h.vm.hostname = "db01"
-    h.vm.network "private_network", ip: "192.168.135.121"
+    h.vm.network "private_network", ip: "192.168.56.121"
     h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
   end
 end

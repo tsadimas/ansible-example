@@ -7,6 +7,7 @@ ansible -m ping all
 to check connectivity
 * run testing environment
 ```bash
+vagrant plugin install vagrant-hostmanager
 cd vagrant
 vagrunt up
 vagrant ssh-config >> ~/.ssh/config

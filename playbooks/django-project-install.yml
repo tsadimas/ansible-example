@@ -24,7 +24,7 @@
 
   - name: print user name
     debug:
-      msg: "login user is {{login_user}}"  
+      msg: "login user is {{login_user}}"
 
   - name: ensure github.com is a known host
     lineinfile:
@@ -33,6 +33,7 @@
       state: present
       line: "{{lookup('pipe', 'ssh-keyscan -t rsa github.com')}}"
       regexp: "^github\\.com"
+    ignore_errors: true
 
   - name: clone django project
     git:
@@ -55,7 +56,7 @@
     with_items:
       - "{{django.env | dict2items}}"
 
-  
+
   - name: print ip
     debug:
       msg: "ALLOWED_HOSTS={{ansible_all_ipv4_addresses}}"
@@ -93,26 +94,26 @@
     - name: make migrations
       django_manage:
         command: "{{ item }}"
-        project_path: "{{app_dir}}/myproject"
+        app_path: "{{app_dir}}/myproject"
         virtualenv: "{{app_dir}}/myvenv"
       with_items:
         - makemigrations
         - migrate
 
-    
 
-    
-    
+
+
+
     - name: copy django service file
       template:
         src: ../files/django/gunicorn.service.j2
         dest: "/etc/systemd/system/gunicorn.service"
       become: yes
       become_user: root
-      
+
 
     - name: ensure gunicorn service started
-      service: 
+      service:
         name: gunicorn
         state: started
         enabled: yes
@@ -144,8 +145,8 @@
       with_items:
         - ../files/certs/server.crt
         - ../files/certs/server.key
-      
-  
+
+
     - name: enable django site in nginx
       file:
         src: "/etc/nginx/sites-available/django"
@@ -165,7 +166,7 @@
         path: /etc/nginx/sites-enabled/default
         state: absent
       notify: restart nginx
-    
+
     become: yes
     become_user: root
 
@@ -183,13 +184,3 @@
         name: gunicorn
         state: restarted
       become: yes
-      
-    
-
-
-    
-
-
-
-
-  

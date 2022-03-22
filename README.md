@@ -1,6 +1,6 @@
-# Project set up 
+# Project set up
 * create an inventory file (e.g. hosts or hosts.yaml) that holds the remote hosts that ansible will handle.
-* Example entry is 
+* Example entry is
 ```yaml
 webserver: # <-- group
   hosts: # <-- List of hosts in group
@@ -15,11 +15,11 @@ webserver: # <-- group
   vars:  # <-- common variables in this group
     ansible_python_interpreter: /usr/bin/python3
 ```
-* to test if all hosts are accesible, run 
+* to test if all hosts are accesible, run
 ```bash
 ansible -m ping all
 ```
-* to test if a group of hosts are accesible, run 
+* to test if a group of hosts are accesible, run
 ```bash
 ansible -m ping all <group-name>
 ```
@@ -65,7 +65,14 @@ chmod 600 ~/.ansible/vault_pass.txt
 ansible-playbook playbooks/use-api-key.yaml --vault-password-file  ~/.ansible/vault_pass.txt
 ```
 
+## Ignore host_key_checking
 
+add this line to ``ansible.cfg`` in [defaults] section
+```ini
+host_key_checking = false
+```
+Links:
+* [Managing host key checking](https://docs.ansible.com/ansible/latest/user_guide/connection_details.html)
 ## Create self-signed certificates
 ```bash
 cd files/certs

@@ -36,6 +36,8 @@ vagrant ssh-config >> ~/.ssh/config
 ```bash
 ansible-playbook -l database playbooks/database.yml
 ```
+Links:
+* [Vagrant Quick start](https://learn.hashicorp.com/collections/vagrant/getting-started)
 
 ## Vault
 * create a file that holds the **secret**
@@ -64,7 +66,8 @@ chmod 600 ~/.ansible/vault_pass.txt
 ```bash
 ansible-playbook playbooks/use-api-key.yaml --vault-password-file  ~/.ansible/vault_pass.txt
 ```
-
+Links:
+* [Encrypting content with Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)
 ## Ignore host_key_checking
 
 add this line to ``ansible.cfg`` in [defaults] section

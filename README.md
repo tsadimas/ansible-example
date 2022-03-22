@@ -73,6 +73,12 @@ host_key_checking = false
 ```
 Links:
 * [Managing host key checking](https://docs.ansible.com/ansible/latest/user_guide/connection_details.html)
+
+
+## Get host basic info
+```bash
+ansible-playbook -l <hostname> playbooks/hostvars_and_facts.yml
+```
 ## Create self-signed certificates
 ```bash
 cd files/certs

@@ -10,4 +10,3 @@ db01
 
 [control]
 control ansible_connection=local
-

@@ -58,4 +58,3 @@ EOF
     h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
   end
 end
-

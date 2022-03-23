@@ -6,7 +6,7 @@
     app_dir: "{{user_dir}}/flask-project"
     git_repo_url: "https://github.com/tsadimas/flask-example-project.git"
     git_repo_branch: "main"
-  
+
   tasks:
 
   - name: ensure github.com is a known host
@@ -64,7 +64,7 @@
         virtualenv: "{{app_dir}}/fvenv"
         virtualenv_python: python3
         state: forcereinstall
-    
+
     - name: copy flask service file
       template:
         src: ../files/flask/flaskgunicorn.service.j2
@@ -74,7 +74,7 @@
       notify: restart flaskgunicorn
 
     - name: ensure flaskgunicorn service started
-      service: 
+      service:
         name: flaskgunicorn
         state: started
         enabled: yes
@@ -106,8 +106,8 @@
       with_items:
         - ../files/certs/server.crt
         - ../files/certs/server.key
-      
-  
+
+
     - name: enable flask site in nginx
       file:
         src: "/etc/nginx/sites-available/flask"
@@ -127,7 +127,7 @@
         path: /etc/nginx/sites-enabled/default
         state: absent
       notify: restart nginx
-    
+
     become: yes
     become_user: root
 
@@ -139,12 +139,9 @@
       name: nginx
       state: restarted
     become: yes
-  
+
   - name: restart flaskgunicorn
     service:
       name: flaskgunicorn
       state: restarted
     become: yes
-
-
-

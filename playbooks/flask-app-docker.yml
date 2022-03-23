@@ -6,7 +6,7 @@
     app_dir: "{{user_dir}}/flask-project"
     git_repo_url: "https://github.com/tsadimas/flask-example-project.git"
     git_repo_branch: "main"
-  
+
   tasks:
 
   - name: ensure github.com is a known host
@@ -37,7 +37,7 @@
       line: "{{item.key}}={{item.value}}"
     with_items:
       - "{{app.env | dict2items}}"
-    
+
   - name:
     command: id
     register: user_groups
@@ -46,7 +46,7 @@
       msg: "Groups {{user_groups}}"
 
   - name: check if docker-compose exists
-    stat: 
+    stat:
       path: "{{app_dir}}/docker-compose.yml"
     register: docker_compose_file
 
@@ -54,7 +54,7 @@
       msg: "docker_compose_file {{docker_compose_file}}"
 
 
-      
+
   - name: build and run an image
     block:
     - name: build container image
@@ -83,10 +83,5 @@
 
       - debug:
           var: output
-  
+
     when: docker_compose_file.stat.exists == True
-
-
-
-
-  

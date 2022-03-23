@@ -6,7 +6,7 @@
            "Operating System is {{ hostvars[inventory_hostname].ansible_distribution }}"
            "Operating System major version is {{ hostvars[inventory_hostname].ansible_distribution_major_version }}"
            "Operating System minor version is {{ hostvars[inventory_hostname].ansible_distribution_version }}"
-  
+
   - name: Retrieve the list of home directories
     command: ls /home
     register: home_dirs
@@ -18,7 +18,7 @@
   - name: print home dirs
     debug:
       msg: "{{home_dirs.stdout}}"
-  
+
   - name: Check Date with Shell command
     shell:
         "date"
@@ -34,7 +34,5 @@
   - name: Display the file
     shell: cat /tmp/dirlist.txt
     register: displaylist
-    
-  - debug: msg="{{displaylist.stdout_lines}}"
 
-  
+  - debug: msg="{{displaylist.stdout_lines}}"

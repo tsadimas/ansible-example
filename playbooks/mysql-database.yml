@@ -1,34 +1,36 @@
 ---
 - hosts: database
   become: true
-  
-  
+
+
   tasks:
 
   - name: print mysql password
     debug:
       msg: mysql root pass is {{mysql_root_password}}
 
+
   - name: Specify MySQL root password before installing
-    debconf: 
+    debconf:
       name: 'mysql-server'
-      question: 'mysql-server/root_password' 
-      value: '{{mysql_root_password | quote}}' 
+      question: 'mysql-server/root_password'
+      value: '{{mysql_root_password | quote}}'
       vtype: 'password'
-    
+
+
 
   - name: Confirm MySQL root password before installing
-    debconf: 
-      name: 'mysql-server' 
+    debconf:
+      name: 'mysql-server'
       question: 'mysql-server/root_password_again'
       value: '{{mysql_root_password | quote}}'
       vtype: 'password'
-    
-    
+
+
   - name: install mysql-server
-    apt: 
-      name: ['mysql-server', 'mysql-client'] 
-      state: present 
+    apt:
+      name: ['mysql-server', 'mysql-client']
+      state: present
       update_cache: yes
 
   - name: ensure mysql started
@@ -46,33 +48,33 @@
       deb_mysql_python_package: "{% if 'python3' in ansible_python_interpreter|default('') %}python3-mysqldb{% else %}python-mysqldb{% endif %}"
 
   - name: Ensure MySQL Python libraries are installed.
-    apt: 
+    apt:
       name: "{{ deb_mysql_python_package }}"
       state: present
-      update_cache: yes 
+      update_cache: yes
 
   - name: create demo database
-    mysql_db: 
+    mysql_db:
       login_host: 'localhost'
       login_user: 'root'
       login_password: "{{mysql_root_password}}"
-      name: demo 
+      name: demo
       state: present
-      
+
 
   - name: create demo user
     mysql_user:
       login_host: 'localhost'
       login_user: 'root'
-      login_password: "{{mysql_root_password}}" 
-      name: demo 
-      password: demo 
-      priv: demo.*:ALL 
-      host: '%' 
+      login_password: "{{mysql_root_password}}"
+      name: demo
+      password: demo
+      priv: demo.*:ALL
+      host: '%'
       state: present
 
   handlers:
     - name: restart mysql
-      service: 
-        name: mysql 
+      service:
+        name: mysql
         state: restarted

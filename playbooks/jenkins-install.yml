@@ -1,6 +1,6 @@
 - hosts: loadbalancer
   become: true
-  
+
   vars:
     jenkins_hostname: jenkins.example.com
     java_packages:

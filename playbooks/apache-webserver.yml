@@ -8,13 +8,13 @@
         name: apache2
         state: present
         update_cache: true
-    
+
     - name: ensure apache2 started
-      service: 
+      service:
         name: apache2
         state: started
         enabled: yes
-    
+
     - name: create /var/www/demo directory
       file:
         path: /var/www/demo
@@ -25,7 +25,7 @@
         src: ../files/webserver/index.html
         dest: /var/www/demo
         mode: 0755
-      
+
     - name: disable default apache conf
       file:
         path: /etc/apache2/sites-enabled/000-default.conf
@@ -51,5 +51,3 @@
       service:
         name: apache2
         state: restarted
-
-    

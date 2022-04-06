@@ -13,7 +13,7 @@
 Vagrant.configure(2) do |config|
   config.hostmanager.enabled = true
 
-  config.vm.box = "ubuntu/bionic64"
+  config.vm.box = "ubuntu/focal64"
 
   config.vm.define "control", primary: true do |h|
     h.vm.hostname = "control"
@@ -58,4 +58,3 @@ EOF
     h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
   end
 end
-

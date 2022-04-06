@@ -1,10 +1,30 @@
-Procedure
+# Project set up
 * create an inventory file (e.g. hosts or hosts.yaml) that holds the remote hosts that ansible will handle.
-* run 
+* Example entry is
+```yaml
+webserver: # <-- group
+  hosts: # <-- List of hosts in group
+    gcloud_host: # <-- host number 1 in group
+      ansible_host: 35.189.109.16
+      ansible_port: 22
+      ansible_ssh_user: rg
+    app01:  # <-- host number 2 in group
+      ansible_host: app01
+    app02:  # <-- host number 3 in group
+      ansible_host: app02
+  vars:  # <-- common variables in this group
+    ansible_python_interpreter: /usr/bin/python3
+```
+* to test if all hosts are accesible, run
 ```bash
 ansible -m ping all
 ```
-to check connectivity
+* to test if a group of hosts are accesible, run
+```bash
+ansible -m ping all <group-name>
+```
+
+# Run development environment with Vagrant
 * run testing environment
 ```bash
 vagrant plugin install vagrant-hostmanager
@@ -16,6 +36,8 @@ vagrant ssh-config >> ~/.ssh/config
 ```bash
 ansible-playbook -l database playbooks/database.yml
 ```
+Links:
+* [Vagrant Quick start](https://learn.hashicorp.com/collections/vagrant/getting-started)
 
 ## Vault
 * create a file that holds the **secret**
@@ -44,8 +66,22 @@ chmod 600 ~/.ansible/vault_pass.txt
 ```bash
 ansible-playbook playbooks/use-api-key.yaml --vault-password-file  ~/.ansible/vault_pass.txt
 ```
+Links:
+* [Encrypting content with Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)
+## Ignore host_key_checking
+
+add this line to ``ansible.cfg`` in [defaults] section
+```ini
+host_key_checking = false
+```
+Links:
+* [Managing host key checking](https://docs.ansible.com/ansible/latest/user_guide/connection_details.html)
 
 
+## Get host basic info
+```bash
+ansible-playbook -l <hostname> playbooks/hostvars_and_facts.yml
+```
 ## Create self-signed certificates
 ```bash
 cd files/certs

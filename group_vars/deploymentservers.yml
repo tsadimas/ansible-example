@@ -1,5 +1,5 @@
 user_dir: "/home/azureuser"
-app_port: 5000
+app_port: 8080
 service:
   workingdir: "{{user_dir}}/django-project/myproject"
   execstart: "{{user_dir}}/django-project/myvenv/bin/gunicorn --access-logfile - --workers 3 --bind 0.0.0.0:8000 myproject.wsgi:application"

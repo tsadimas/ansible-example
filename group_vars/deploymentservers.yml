@@ -1,5 +1,5 @@
 user_dir: "/home/azureuser"
-app_port: 8080
+app_port: 8000
 app_user: azureuser
 service:
   workingdir: "{{user_dir}}/django-project/myproject"

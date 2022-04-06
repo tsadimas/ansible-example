@@ -1,4 +1,4 @@
-user_dir: "/home/jenkins"
+user_dir: "/home/azureuser"
 app_port: 5000
 service:
   workingdir: "{{user_dir}}/django-project/myproject"

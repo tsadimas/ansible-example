@@ -26,6 +26,10 @@
     debug:
       msg: "login user is {{login_user}}"
 
+  - name: print user dir
+    debug:
+      msg: "login dir is {{user_dir}}"
+
   - name: ensure github.com is a known host
     lineinfile:
       dest: "{{user_dir}}/.ssh/known_hosts"

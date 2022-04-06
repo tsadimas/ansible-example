@@ -3,7 +3,7 @@ Description=gunicorn daemon
 After=network.target
 
 [Service]
-User=vagrant
+User={{app_user}}
 Group=www-data
 WorkingDirectory={{djangoservice.workingdir}}
 ExecStart={{djangoservice.execstart}}

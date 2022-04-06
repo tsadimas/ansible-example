@@ -1,5 +1,5 @@
 ---
-- hosts: webserver
+- hosts: webserver,depoymentservers
 
   vars:
     app_dir: "{{user_dir}}/django-project"
@@ -24,7 +24,7 @@
 
   - name: print user name
     debug:
-      msg: "login user is {{login_user}}"  
+      msg: "login user is {{login_user}}"
 
   - name: ensure github.com is a known host
     lineinfile:
@@ -55,7 +55,7 @@
     with_items:
       - "{{django.env | dict2items}}"
 
-  
+
   - name: print ip
     debug:
       msg: "ALLOWED_HOSTS={{ansible_all_ipv4_addresses}}"
@@ -99,20 +99,20 @@
         - makemigrations
         - migrate
 
-    
 
-    
-    
+
+
+
     - name: copy django service file
       template:
         src: ../files/django/gunicorn.service.j2
         dest: "/etc/systemd/system/gunicorn.service"
       become: yes
       become_user: root
-      
+
 
     - name: ensure gunicorn service started
-      service: 
+      service:
         name: gunicorn
         state: started
         enabled: yes
@@ -144,8 +144,8 @@
       with_items:
         - ../files/certs/server.crt
         - ../files/certs/server.key
-      
-  
+
+
     - name: enable django site in nginx
       file:
         src: "/etc/nginx/sites-available/django"
@@ -165,7 +165,7 @@
         path: /etc/nginx/sites-enabled/default
         state: absent
       notify: restart nginx
-    
+
     become: yes
     become_user: root
 
@@ -183,13 +183,3 @@
         name: gunicorn
         state: restarted
       become: yes
-      
-    
-
-
-    
-
-
-
-
-  

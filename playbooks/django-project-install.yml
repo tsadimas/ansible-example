@@ -59,16 +59,20 @@
     with_items:
       - "{{django.env | dict2items}}"
 
+  - name: Get my public IP
+    ipify_facts:
 
-  - name: print ip
-    debug:
-      msg: "ALLOWED_HOSTS={{ansible_all_ipv4_addresses}}"
+  - debug: var=ipify_public_ip
+
+  # - name: print ip
+  #   debug:
+  #     msg: "ALLOWED_HOSTS={{ansible_all_ipv4_addresses}}"
 
   - name: add ip in django ALLOWED_HOSTS
     lineinfile:
       dest: "{{app_dir}}/myproject/myproject/settings.py"
       regexp: "^ALLOWED_HOSTS ="
-      line: "ALLOWED_HOSTS = {{ansible_all_ipv4_addresses}}"
+      line: "ALLOWED_HOSTS = {{ipify_public_ip}}"
       state: present
 
   - name: install and activate virtual environment

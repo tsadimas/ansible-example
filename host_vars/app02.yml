@@ -1,0 +1,10 @@
+service:
+  workingdir: /home/vagrant/flask-project/
+  execstart: /home/vagrant/flask-project/fvenv/bin/gunicorn --access-logfile - --workers 3 --bind 0.0.0.0:{{app_port}} app.main:app
+app_port: 8000
+
+app:
+  env:
+    SQLALCHEMY_DATABASE_URI: postgresql://demouser:pass123@db01/demodb
+    SQLALCHEMY_TRACK_MODIFICATIONS: False
+    SECRET_KEY: sfvgbrh212131

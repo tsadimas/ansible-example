@@ -18,7 +18,7 @@
     debug: msg="{{ ansible_distribution_release }}"
 
 
-  - name: Add universe repository for bionic
+  - name: Add universe repository for ubuntu release
     apt_repository:
       repo: deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe
       state: present

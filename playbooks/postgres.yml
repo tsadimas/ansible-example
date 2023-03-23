@@ -6,7 +6,7 @@
   tasks:
     - name: change listen_addresses to '*'
       lineinfile:
-        dest: /etc/postgresql/12/main/postgresql.conf
+        dest: /etc/postgresql/14/main/postgresql.conf
         regexp: "^#listen_addresses"
         line: "listen_addresses = '*'"
         state: present

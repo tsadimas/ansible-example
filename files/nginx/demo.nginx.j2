@@ -13,4 +13,7 @@ server {
       proxy_pass http://localhost:{{app_port}};
     }
 
+    location /static/ {
+    root /home/vagrant/django-project/myproject;
+    }
   }

@@ -99,9 +99,7 @@
       with_items:
         - makemigrations
         - migrate
-
-
-
+        - collectstatic
 
 
     - name: copy django service file
@@ -146,7 +144,11 @@
         - ../files/certs/server.crt
         - ../files/certs/server.key
 
-
+    - name: fix nginx permissions
+      ansible.builtin.file:
+        path: /home/vagrant
+        mode: ugo+x
+             
     - name: enable django site in nginx
       file:
         src: "/etc/nginx/sites-available/django"

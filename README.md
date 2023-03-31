@@ -90,7 +90,7 @@ openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 365 
 notice that crt and key files are added to .gitignore
 
 
-* postgres
+## postgres from ansible-galaxy
 install postgresql role
 ```bash
 ansible-galaxy install geerlingguy.postgresql

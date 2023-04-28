@@ -146,7 +146,7 @@
 
     - name: fix nginx permissions
       ansible.builtin.file:
-        path: /home/vagrant
+        path: "{{user_dir}}"
         mode: ugo+x
              
     - name: enable django site in nginx

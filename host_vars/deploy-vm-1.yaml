@@ -11,3 +11,4 @@ django:
     SECRET_KEY: 'sfvgbrh212131'
     DATABASE_URL: 'postgresql://demouser:pass123@localhost/demodb'
 
+user_name: azureuser

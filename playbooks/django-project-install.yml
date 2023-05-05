@@ -155,14 +155,18 @@
         src: "/etc/nginx/sites-available/django"
         dest: "/etc/nginx/sites-enabled/django"
         state: link
-      notify: restart nginx
+      notify:
+        - restart nginx
+        - reload nginx
 
     - name: enable djangossl site in nginx
       file:
         src: "/etc/nginx/sites-available/djangossl"
         dest: "/etc/nginx/sites-enabled/djangossl"
         state: link
-      notify: restart nginx
+      notify:
+        - restart nginx
+        - reload nginx
 
     - name: de-activate default nginx site
       file:
@@ -180,6 +184,12 @@
       service:
         name: nginx
         state: restarted
+      become: yes
+
+    - name: reload nginx
+      service:
+        name: nginx
+        state: reloaded
       become: yes
 
     - name: restart gunicorn

@@ -62,7 +62,7 @@
 
   - name: print public ip
     debug:
-      msg: "public ip is {{public_ip}}"
+      msg: "public ip is {{public_ip.ipify_public_ip}}"
     
   - name: print ip
     debug:

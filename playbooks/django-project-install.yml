@@ -108,6 +108,7 @@
         dest: "/etc/systemd/system/gunicorn.service"
       become: yes
       become_user: root
+      notify: restart gunicorn
 
 
     - name: ensure gunicorn service started

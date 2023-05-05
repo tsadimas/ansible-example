@@ -27,7 +27,7 @@
       name: gnupg2
       state: present
       update_cache: true
-    when: ansible_distribution_release == 'focal'
+    
 
   - include_role:
       name: geerlingguy.docker
@@ -36,6 +36,6 @@
 
   - name: 'add users to docker group'
     user:
-      name: 'vagrant'
+      name: '{{user_name}}'
       groups: 'docker'
       append: 'yes'

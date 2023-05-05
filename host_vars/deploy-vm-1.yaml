@@ -9,6 +9,5 @@ djangoservice:
 django:
   env:
     SECRET_KEY: 'sfvgbrh212131'
-    DATABASE_URL: 'postgresql://demouser:1234pass@localhost/demodb'
+    DATABASE_URL: 'postgresql://demouser:pass123@localhost/demodb'
 
-mysql_root_password: 1234pass

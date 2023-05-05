@@ -56,7 +56,14 @@
     with_items:
       - "{{django.env | dict2items}}"
 
+  - name: Get my public IP
+    ipify_facts:
+    register: public_ip
 
+  - name: print public ip
+    debug:
+      msg: "public ip is {{public_ip}}"
+    
   - name: print ip
     debug:
       msg: "ALLOWED_HOSTS={{ansible_all_ipv4_addresses}}"

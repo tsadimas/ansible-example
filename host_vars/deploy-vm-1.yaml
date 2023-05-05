@@ -12,3 +12,4 @@ django:
     DATABASE_URL: 'postgresql://demouser:pass123@localhost/demodb'
 
 user_name: azureuser
+app_port: 8000

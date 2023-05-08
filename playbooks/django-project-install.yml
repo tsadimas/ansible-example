@@ -72,13 +72,13 @@
 
   - name: print ip
     debug:
-      msg: "ALLOWED_HOSTS={{ public_ip.json.ip}}"
+      msg: "ALLOWED_HOSTS={{ ansible_all_ipv4_addresses + [public_ip.json.ip]}}"
 
   - name: add ip in django ALLOWED_HOSTS
     lineinfile:
       dest: "{{app_dir}}/myproject/myproject/settings.py"
       regexp: "^ALLOWED_HOSTS ="
-      line: "ALLOWED_HOSTS = {{ansible_all_ipv4_addresses}}"
+      line: "ALLOWED_HOSTS = {{ ansible_all_ipv4_addresses + [public_ip.json.ip]}}"
       state: present
 
   - name: install and activate virtual environment

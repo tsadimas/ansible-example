@@ -56,17 +56,23 @@
     with_items:
       - "{{django.env | dict2items}}"
 
-  - name: Get my public IP
-    ipify_facts:
+  - name: Get the public IP address of the network.
+    uri:
+      url: https://api.ipify.org?format=json
+      method: Get
+    changed_when: false
     register: public_ip
+    until: public_ip.status == 200
+    retries: 6
+    delay: 10
 
   - name: print public ip
     debug:
-      msg: "public ip is {{ipify_public_ip}}"
-    
+      msg: "public ip is {{ public_ip.json.ip}}"
+
   - name: print ip
     debug:
-      msg: "ALLOWED_HOSTS={{ipify_public_ip}}"
+      msg: "ALLOWED_HOSTS={{ public_ip.json.ip}}"
 
   - name: add ip in django ALLOWED_HOSTS
     lineinfile:
